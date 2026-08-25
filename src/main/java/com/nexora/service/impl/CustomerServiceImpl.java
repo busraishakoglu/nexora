@@ -40,21 +40,6 @@ public class CustomerServiceImpl implements CustomerService {
                 )
                 .map(customerMapper::toResponse);
     }
-   /* public Page<CustomerResponse> getAllCustomers(String search, Pageable pageable) {
-        if (search == null || search.isBlank()) {
-            return customerRepository.findAll(pageable)
-                    .map(customerMapper::toResponse);
-        }
-
-        return customerRepository
-                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                        search,
-                        search,
-                        search,
-                        pageable
-                )
-                .map(customerMapper::toResponse);
-    }*/
 
 
     @Override
