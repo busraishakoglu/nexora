@@ -1,143 +1,377 @@
 # NEXORA
 
-**NEXORA** is an enterprise-oriented data management platform built with
-Java and Spring Boot. The project is designed to demonstrate scalable
-REST API development, layered backend architecture, data validation,
-database management, and modern enterprise software development
-practices.
+**NEXORA** is an enterprise-oriented **Data Intelligence Platform** designed to demonstrate modern full-stack enterprise software architecture and engineering practices.
 
-> **Project Status:** Active development
+The platform is currently being developed from a strong backend foundation using **Java 21, Spring Boot, PostgreSQL, and Spring Data JPA**, with a target architecture based on **microservices, microfrontends, event-driven communication, data quality processing, analytics, and AI-assisted data intelligence**.
 
-## Tech Stack
+> **Project Status:** Active Development  
+> **Current Phase:** Customer Domain Foundation & Automated Testing
 
--   Java 21
--   Spring Boot
--   Spring Data JPA
--   PostgreSQL
--   Flyway
--   Maven
--   Docker / Docker Compose
--   Lombok
--   Jakarta Bean Validation
--   Postman
--   Git / GitHub
+---
 
-## Architecture
+## Project Vision
 
-NEXORA currently follows a layered architecture with clear separation of
-responsibilities:
+NEXORA is designed to evolve beyond a traditional CRUD application into a modular enterprise platform capable of supporting:
 
-``` text
+- Customer and enterprise data management
+- Data quality analysis and scoring
+- Dynamic search and filtering
+- Analytics and reporting
+- Event-driven processing
+- AI-assisted data quality and anomaly analysis
+- Microservice-based backend architecture
+- Microfrontend-based frontend architecture
+
+The project is developed incrementally so that architectural decisions and engineering practices can evolve together with the platform.
+
+---
+
+## Current Tech Stack
+
+### Backend
+
+- Java 21
+- Spring Boot 3
+- Spring Web
+- Spring Data JPA
+- Hibernate
+- Spring Data JPA Specifications
+- Jakarta Bean Validation
+- Lombok
+- Maven / Maven Wrapper
+
+### Database
+
+- PostgreSQL
+- Flyway
+- Docker / Docker Compose
+
+### Testing
+
+- JUnit 5
+- Mockito
+- Maven Surefire
+
+### API & Development Tools
+
+- Postman
+- Swagger / OpenAPI
+- IntelliJ IDEA
+- DBeaver
+- Git / GitHub
+
+---
+
+## Target Platform Architecture
+
+NEXORA is being designed toward a distributed full-stack architecture.
+
+```text
+                         NEXORA PLATFORM
+                                │
+              ┌─────────────────┴─────────────────┐
+              │                                   │
+       MICROFRONTENDS                        MICROSERVICES
+     React + TypeScript                    Spring Boot / Java
+              │                                   │
+       ┌──────┼───────┐                 ┌─────────┼──────────┐
+       │      │       │                 │         │          │
+   Customer Analytics Data Quality   Customer  Data Quality Analytics
+      MFE      MFE       MFE          Service    Service     Service
+                                                │
+                                                │
+                                              Kafka
+                                                │
+                                                ▼
+                                        AI / ML Services
+                                             Python
+```
+
+The exact service and frontend boundaries will evolve as new domains are implemented.
+
+---
+
+## Current Backend Architecture
+
+The currently implemented Customer domain follows a layered architecture:
+
+```text
+HTTP Request
+     │
+     ▼
 Controller
-    ↓
+     │
+     ▼
 Service
-    ↓
+     │
+     ▼
 Repository
-    ↓
+     │
+     ▼
+Spring Data JPA / Hibernate
+     │
+     ▼
 PostgreSQL
 ```
 
 Supporting components include:
 
--   DTOs for API request/response models
--   Mapper layer for Entity/DTO conversion
--   Global exception handling
--   Custom exceptions
--   Specification-based dynamic filtering
+- DTOs for request and response contracts
+- Mapper layer for Entity/DTO conversion
+- Global exception handling
+- Domain-specific exceptions
+- Bean Validation
+- Spring Data JPA Specifications
+- Pagination and sorting
+- Flyway migrations
+- Automated unit testing
 
-## Implemented Features
+---
 
-### Customer Management
+# Implemented Features
 
--   Create customer
--   Retrieve all customers
--   Retrieve customer by ID
--   Update customer
--   Delete customer
--   Duplicate email prevention
+## Customer Management
 
-### API Validation & Error Handling
+- Create customer
+- Retrieve customers
+- Retrieve customer by ID
+- Update customer
+- Delete customer
+- Duplicate email prevention
 
--   Bean Validation for request payloads
--   Global exception handling
--   Custom `CustomerNotFoundException`
--   Duplicate email exception handling
--   Standardized validation error responses
--   Appropriate HTTP status codes such as `400`, `404`, `409`, and `204`
+---
 
-### Query Capabilities
+## Validation & Error Handling
 
--   Pagination
--   Sorting
--   General customer search
--   Dynamic filtering
--   Combined search, pagination, and sorting
+- Jakarta Bean Validation
+- Global exception handling
+- `CustomerNotFoundException`
+- `DuplicateEmailException`
+- Standardized API error responses
+- Validation error responses
+- HTTP status handling including:
+    - `400 Bad Request`
+    - `404 Not Found`
+    - `409 Conflict`
+    - `204 No Content`
 
-### Database & Development
+---
 
--   PostgreSQL integration
--   Flyway database migrations
--   Docker-based PostgreSQL environment
--   Environment-variable-based database credentials
--   Postman API testing
--   IntelliJ IDEA debug configuration
+## Query Capabilities
 
-## Customer API
+The Customer API supports:
 
-Method     Endpoint                Description
-  ---------- ----------------------- ---------------------------
-`POST`     `/api/customers`        Create a new customer
-`GET`      `/api/customers`        Retrieve customers
-`GET`      `/api/customers/{id}`   Retrieve a customer by ID
-`PUT`      `/api/customers/{id}`   Update a customer
-`DELETE`   `/api/customers/{id}`   Delete a customer
+- Pagination
+- Sorting
+- General search
+- Dynamic filtering
+- Case-insensitive filtering
+- Multiple filter combinations
+- Search + pagination + sorting
 
-### Pagination
+Dynamic query construction is implemented using:
 
-``` http
+```text
+Spring Data JPA Specification<Customer>
+```
+
+This avoids creating separate repository methods for every possible filter combination.
+
+---
+
+# Database & Seed Data
+
+NEXORA uses **PostgreSQL** as its primary relational database.
+
+Database changes are version-controlled using **Flyway**.
+
+Current migrations include:
+
+```text
+V1__create_customers_table.sql
+V2__insert_customer_seed_data.sql
+```
+
+## Realistic Seed Dataset
+
+The development database contains **1,000+ deterministic customer records** designed to support future:
+
+- Reporting
+- Data quality analysis
+- Pagination testing
+- Filtering
+- Analytics
+- AI/ML experiments
+
+The seed dataset intentionally contains controlled data variations such as:
+
+- Multiple email domains
+- Missing phone numbers
+- Different phone formats
+- Case variations
+- Leading/trailing whitespace
+- Distributed creation/update dates
+
+This provides a more realistic dataset for future Data Quality and AI modules.
+
+---
+
+# Customer API
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/customers` | Create a customer |
+| `GET` | `/api/customers` | Retrieve customers |
+| `GET` | `/api/customers/{id}` | Retrieve customer by ID |
+| `PUT` | `/api/customers/{id}` | Update customer |
+| `DELETE` | `/api/customers/{id}` | Delete customer |
+
+---
+
+## Pagination
+
+```http
 GET /api/customers?page=0&size=10
 ```
 
-### Sorting
+## Sorting
 
-``` http
+```http
 GET /api/customers?page=0&size=10&sort=lastName,asc
 ```
 
-### Search
+## General Search
 
-``` http
+```http
 GET /api/customers?search=test
 ```
 
 Search can be combined with pagination and sorting:
 
-``` http
+```http
 GET /api/customers?search=test&page=0&size=10&sort=lastName,asc
 ```
 
-### Dynamic Filtering
+## Dynamic Filtering
 
-The customer query infrastructure supports dynamic filtering using
-Spring Data JPA Specifications.
-
-Examples:
-
-``` http
-GET /api/customers?firstName=test
+```http
+GET /api/customers?firstName=busra
 ```
 
-``` http
-GET /api/customers?email=example.com
+```http
+GET /api/customers?email=gmail.com
 ```
 
-Filters can be combined with pagination and sorting.
+Multiple filters can be combined:
 
-## Error Handling
+```http
+GET /api/customers?firstName=busra&email=gmail.com&page=0&size=10
+```
 
-Example response when a customer cannot be found:
+Internally, these parameters are converted into dynamic JPA Specifications.
 
-``` json
+---
+
+# Automated Testing
+
+Automated unit testing is implemented using:
+
+- **JUnit 5**
+- **Mockito**
+
+Current test suite status:
+
+```text
+Tests run: 18
+Failures: 0
+Errors: 0
+Skipped: 0
+```
+
+## Customer Service Tests
+
+The service test suite currently covers:
+
+- Successful customer creation
+- Duplicate email handling
+- Successful customer retrieval
+- Missing customer retrieval
+- Successful customer update
+- Missing customer update
+- Successful customer deletion
+- Missing customer deletion
+- Pagination
+- Empty page handling
+- Dynamic filtering
+
+Repository and mapper dependencies are mocked to keep service tests isolated from the database.
+
+---
+
+## Customer Specification Tests
+
+Dynamic filtering logic is tested independently.
+
+Current coverage includes:
+
+### Case-insensitive field filtering
+
+```text
+firstName = "Büşra"
+
+→
+
+LOWER(firstName) LIKE '%büşra%'
+```
+
+### General search
+
+General search generates an OR expression across:
+
+```text
+firstName
+OR lastName
+OR email
+OR phone
+```
+
+### Multiple filters
+
+Individual field filters are combined using AND:
+
+```text
+firstName LIKE '%büşra%'
+AND
+email LIKE '%gmail%'
+```
+
+### Empty filters
+
+An empty filter request does not introduce unnecessary field predicates.
+
+---
+
+## Running Tests
+
+Run the complete test suite:
+
+```bash
+./mvnw test
+```
+
+Run the Customer service and specification unit tests:
+
+```bash
+./mvnw -Dtest=CustomerServiceImplTest,CustomerSpecificationTest test
+```
+
+---
+
+# Error Handling
+
+Example customer-not-found response:
+
+```json
 {
   "timestamp": "2026-08-15T12:00:00",
   "status": 404,
@@ -149,7 +383,7 @@ Example response when a customer cannot be found:
 
 Example validation response:
 
-``` json
+```json
 {
   "timestamp": "2026-08-15T12:00:00",
   "status": 400,
@@ -162,88 +396,121 @@ Example validation response:
 }
 ```
 
-## Environment Variables
+---
 
-Database passwords are not stored directly in the source code.
+# Environment Variables
+
+Database credentials are not stored directly in source code.
 
 `application.properties` uses:
 
-``` properties
+```properties
 spring.datasource.password=${DB_PASSWORD}
 ```
 
-Docker Compose also reads the database password from the local
-environment.
+Create a local `.env` file when required:
 
-Create a local `.env` file:
-
-``` env
+```env
 DB_PASSWORD=your_local_database_password
 ```
 
-The `.env` file is excluded from Git tracking and must not be committed.
+The `.env` file must remain excluded from Git.
 
-## Running the Project
+---
 
-### Prerequisites
+# Running NEXORA
 
-Make sure the following are installed:
+## Prerequisites
 
--   JDK 21
--   Docker
--   Git
+- JDK 21
+- Docker
+- Git
 
-### Start PostgreSQL
+## Start PostgreSQL
 
-From the project root:
-
-``` bash
+```bash
 docker compose up -d
 ```
 
-### Run the Application
+## Run the Application
 
-Using the Maven Wrapper:
-
-``` bash
+```bash
 ./mvnw spring-boot:run
 ```
 
-The API is available at:
+The backend API runs at:
 
-``` text
+```text
 http://localhost:8080
 ```
 
-## Roadmap
+---
 
-The following capabilities are planned as the project evolves:
+# Development Roadmap
 
--   Swagger / OpenAPI documentation
--   Auditing and structured logging
--   Spring Security
--   JWT authentication and authorization
--   Data Quality Engine
--   Data quality rules and scoring
--   Kafka-based event-driven architecture
--   Multi-threaded processing
--   Unit tests with JUnit 5 and Mockito
--   Integration testing with Testcontainers
--   CI/CD pipeline
--   React frontend
--   Python-based AI service integration
+## Current / Next
 
-## Development Approach
+- [x] Customer CRUD
+- [x] Request validation
+- [x] Global exception handling
+- [x] Pagination
+- [x] Sorting
+- [x] Dynamic filtering with Specification
+- [x] PostgreSQL integration
+- [x] Flyway migrations
+- [x] 1,000+ realistic seed dataset
+- [x] Customer Service unit tests
+- [x] Customer Specification unit tests
+- [x] 18 passing unit tests
+- [ ] MockMvc Controller tests
+- [ ] Testcontainers integration tests
+- [ ] Auditing
+- [ ] Soft delete
+- [ ] Structured logging
 
-NEXORA is being developed incrementally with an emphasis on:
+## Platform Evolution
 
--   Clean and maintainable code
--   RESTful API design
--   Explicit validation and error handling
--   Secure configuration management
--   Testable backend architecture
--   Scalable enterprise development practices
+- [ ] Spring Security
+- [ ] JWT authentication and authorization
+- [ ] Microservice decomposition
+- [ ] API Gateway
+- [ ] Kafka event-driven communication
+- [ ] Data Quality Service
+- [ ] Analytics / Reporting Service
+- [ ] Data quality rules and scoring
+- [ ] Multi-threaded / batch processing
+- [ ] React + TypeScript frontend
+- [ ] Microfrontend architecture
+- [ ] Python AI/ML service
+- [ ] AI-assisted data quality analysis
+- [ ] Anomaly detection
+- [ ] Dockerized platform environment
+- [ ] CI/CD with GitHub Actions
+- [ ] Observability and monitoring
+
+---
+
+# Development Approach
+
+NEXORA is developed incrementally with an emphasis on:
+
+- Clean and maintainable code
+- Domain-oriented architecture
+- RESTful API design
+- Testability
+- Explicit validation and error handling
+- Secure configuration
+- Database version control
+- Reproducible development environments
+- Scalable full-stack architecture
+- Microservice readiness
+- Microfrontend readiness
+- Data-driven and AI-assisted capabilities
+
+The current Customer domain serves as the first foundation of the larger NEXORA platform.
+
+---
 
 ## License
 
-This project is currently developed as a portfolio project.
+NEXORA is currently developed as a personal portfolio and software engineering showcase project.
